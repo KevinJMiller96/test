@@ -1,56 +1,29 @@
 <style>
 body {
+    margin: 0;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: black; /* Background simulating old TV */
-    margin: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5)), 
+                url('https://thumbs.dreamstime.com/z/man-rolling-dough-concretre-countertop-man-rolling-dough-concretre-countertop-wide-space-172750318.jpg'); /* Replace with texture image URL */
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: #FFFFFF; /* Text color */
+    font-family: 'Courier New', Courier, monospace; /* Similar font style */
 }
 
-.tv-screen {
-    position: relative;
-    width: 600px; /* Set the width of your TV screen */
-    height: 400px; /* Set the height */
-    overflow: hidden;
-    border: 20px solid #333; /* Simulate the TV frame */
-    border-radius: 15px; /* Rounded corners */
-    background: #222; /* Inner TV color */
+.container {
+    position: relative; 
+    padding: 20px; 
+    border: 2px solid #0f0; /* Green border for contrast */
+    border-radius: 10px; 
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5); /* Glow effect */
+    backdrop-filter: blur(5px); /* Slight blur for depth */
 }
 
-.content {
-    position: relative;
-    z-index: 2; /* Ensure content is above scanlines */
-    color: white; /* Content color */
-    padding: 20px;
+h1, h2, p {
     text-align: center;
-}
-
-.scanlines {
-    position: absolute;
-    top: -100%; /* Start above the screen */
-    left: 0;
-    width: 100%;
-    height: 200%; /* Allow for movement */
-    background: repeating-linear-gradient(
-        rgba(255, 255, 255, 0.1), 
-        rgba(255, 255, 255, 0.1) 2px, /* Increased line thickness */
-        rgba(0, 0, 0, 0.7) 2px, 
-        rgba(0, 0, 0, 0.7) 10px /* Increased gap */
-    );
-    opacity: 0.15; /* Adjust the visibility of the scanlines */
-    pointer-events: none; /* Ensure clicks go through */
-    transform: translateY(0); /* Start transform */
-    animation: scan 2s linear infinite; /* Animation */
-}
-
-@keyframes scan {
-    from {
-        transform: translateY(0); /* No movement */
-    }
-    to {
-        transform: translateY(100%); /* Slide down */
-    }
 }
 </style>
 
