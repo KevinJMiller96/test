@@ -1,5 +1,5 @@
 <style>
-    body {
+body {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -28,18 +28,28 @@
 
 .scanlines {
     position: absolute;
-    top: 0;
+    top: -100%; /* Start above the screen */
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 200%; /* Allow for movement */
     background: repeating-linear-gradient(
         rgba(255, 255, 255, 0.1), 
         rgba(255, 255, 255, 0.1) 1px, 
         rgba(0, 0, 0, 0.7) 1px, 
-        rgba(0, 0, 0, 0.7) 2px
+        rgba(0, 0, 0, 0.7) 4px /* Increased gap */
     );
     opacity: 0.15; /* Adjust the visibility of the scanlines */
     pointer-events: none; /* Ensure clicks go through */
+    animation: scan 2s linear infinite; /* Animation */
+}
+
+@keyframes scan {
+    from {
+        top: -100%; /* Start above */
+    }
+    to {
+        top: 100%; /* Move down */
+    }
 }
 </style>
 
