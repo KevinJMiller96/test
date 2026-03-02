@@ -4,7 +4,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: green; /* Background simulating old TV */
+    background: black; /* Background simulating old TV */
     margin: 0;
 }
 
@@ -34,21 +34,22 @@ body {
     height: 200%; /* Allow for movement */
     background: repeating-linear-gradient(
         rgba(255, 255, 255, 0.1), 
-        rgba(255, 255, 255, 0.1) 1px, 
-        rgba(0, 0, 0, 0.7) 1px, 
-        rgba(0, 0, 0, 0.7) 4px /* Increased gap */
+        rgba(255, 255, 255, 0.1) 2px, /* Increased line thickness */
+        rgba(0, 0, 0, 0.7) 2px, 
+        rgba(0, 0, 0, 0.7) 10px /* Increased gap */
     );
     opacity: 0.15; /* Adjust the visibility of the scanlines */
     pointer-events: none; /* Ensure clicks go through */
+    transform: translateY(0); /* Start transform */
     animation: scan 2s linear infinite; /* Animation */
 }
 
 @keyframes scan {
     from {
-        top: -100%; /* Start above */
+        transform: translateY(0); /* No movement */
     }
     to {
-        top: 100%; /* Move down */
+        transform: translateY(100%); /* Slide down */
     }
 }
 </style>
