@@ -6,24 +6,48 @@ body {
     justify-content: center;
     align-items: center;
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5)), 
-                url('https://thumbs.dreamstime.com/z/man-rolling-dough-concretre-countertop-man-rolling-dough-concretre-countertop-wide-space-172750318.jpg'); /* Replace with texture image URL */
+                url('https://example.com/your-texture-image.jpg'); /* Replace with texture image URL */
     background-size: cover;
     background-repeat: no-repeat;
     color: #FFFFFF; /* Text color */
     font-family: 'Courier New', Courier, monospace; /* Similar font style */
+    overflow: hidden; /* Prevents scrolling */
 }
 
 .container {
-    position: relative; 
+    position: relative;
     padding: 20px; 
     border: 2px solid #0f0; /* Green border for contrast */
     border-radius: 10px; 
     box-shadow: 0 0 20px rgba(0, 255, 0, 0.5); /* Glow effect */
     backdrop-filter: blur(5px); /* Slight blur for depth */
+    z-index: 1; /* Ensure it sits above scanlines */
 }
 
-h1, h2, p {
-    text-align: center;
+.scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        rgba(255, 255, 255, 0.1), 
+        rgba(255, 255, 255, 0.1) 1px, 
+        rgba(0, 0, 0, 0.7) 1px, 
+        rgba(0, 0, 0, 0.7) 4px /* Adjust for spacing */
+    );
+    opacity: 0.15; /* Adjust visibility of scanlines */
+    pointer-events: none; /* Ensure clicks go through */
+    animation: scan 5s linear infinite; /* Animation timing */
+}
+
+@keyframes scan {
+    0% {
+        background-position: 0% 0; /* Start at the top */
+    }
+    100% {
+        background-position: 0% 100%; /* Move to the bottom */
+    }
 }
 </style>
 
