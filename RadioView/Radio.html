@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wasteland Radio</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Courier New", monospace;
+        color: #00ff66;
+        display: flex;
+        overflow: hidden;
+
+        /* Terminal background */
+        background: #001a0a;
+        background-image: repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,100,0.05) 0px,
+            rgba(0,255,100,0.05) 1px,
+            transparent 1px,
+            transparent 4px
+        );
+    }
+
+    /* LEFT PANEL */
+    .radio-panel {
+        width: 75%;
+        padding: 60px;
+    }
+
+    .radio-panel h2 {
+        margin-bottom: 40px;
+        letter-spacing: 3px;
+    }
+
+    .station {
+        position: relative;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    /* Black square only appears when selected */
+    .station.selected::before {
+        content: "";
+        width: 14px;
+        height: 14px;
+        background: #000;
+        border: 2px solid #00ff66;
+        position: absolute;
+        left: -25px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .station.selected {
+        background: rgba(0, 255, 100, 0.08);
+    }
+
+    /* WAVE DISPLAY (Top Right, smaller square) */
+    .wave-container {
+        position: fixed;
+        top: 40px;
+        right: 40px;
+        width: 25vw;
+        height: 25vw; /* makes it square */
+        border: 2px solid #00ff66;
+        box-shadow: inset 0 0 40px rgba(0,255,100,0.3);
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+</style>
+</head>
+<body>
+
+<div class="radio-panel">
+    <h2>RADIO STATIONS</h2>
+
+    <div class="station" data-station="gnr">
+        Galaxy News Radio
+    </div>
+
+    <div class="station" data-station="enclave">
+        Enclave Radio
+    </div>
+
+    <div class="station" data-station="mojave">
+        Mojave Music Radio
+    </div>
+</div>
+
+<div class="wave-container">
+    <canvas id="waveCanvas"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById("waveCanvas");
+const ctx = canvas.getContext("2d");
+
+let width, height;
+let active = false;
+let time = 0;
+
+function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    width = canvas.width;
+    height = canvas.height;
+}
+resize();
+window.addEventListener("resize", resize);
+
+function drawScales() {
+    ctx.strokeStyle = "rgba(0,255,100,0.2)";
+    ctx.lineWidth = 1;
+
+    for (let y = 0; y < height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+    }
+
+    for (let x = 0; x < width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+    }
+}
+
+function drawWave() {
+    ctx.clearRect(0, 0, width, height);
+    drawScales();
+
+    ctx.strokeStyle = "#00ff66";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    const centerY = height / 2;
+
+    for (let x = 0; x < width; x++) {
+        let y;
+
+        if (active) {
+            let chaotic =
+                Math.sin((x * 0.03) + time) * 20 +
+                Math.sin((x * 0.11) + time * 1.5) * 15 +
+                (Math.random() * 25 - 12);
+
+            y = centerY + chaotic;
+        } else {
+            y = centerY; // perfectly flat when off
+        }
+
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+
+    if (active) {
+        time += 0.08;
+    }
+
+    requestAnimationFrame(drawWave);
+}
+
+drawWave();
+
+/* Station Toggle Logic */
+const stations = document.querySelectorAll(".station");
+let currentStation = null;
+
+stations.forEach(station => {
+    station.addEventListener("click", () => {
+
+        if (currentStation === station) {
+            station.classList.remove("selected");
+            currentStation = null;
+            active = false;
+            return;
+        }
+
+        stations.forEach(s => s.classList.remove("selected"));
+
+        station.classList.add("selected");
+        currentStation = station;
+        active = true;
+    });
+});
+</script>
+
+</body>
+</html>
