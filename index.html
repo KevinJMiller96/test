@@ -1,70 +1,330 @@
-<style>
-body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5)), 
-                url('https://example.com/your-texture-image.jpg'); /* Texture URL */
-    background-size: cover;
-    background-repeat: no-repeat;
-    color: #FFFFFF; /* Text color */
-    font-family: 'Courier New', Courier, monospace; /* Similar font style */
-    overflow: hidden; /* Prevent scrolling */
-}
-
-.container {
-    position: relative;
-    padding: 20px; 
-    border: 2px solid #0f0; /* Green border for contrast */
-    border-radius: 10px; 
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5); /* Glow effect */
-    backdrop-filter: blur(5px); /* Slight blur for depth */
-    z-index: 1; /* Ensure it sits above scanlines */
-}
-
-.scanlines {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        rgba(255, 255, 255, 0.1), 
-        rgba(255, 255, 255, 0.1) 1px, 
-        rgba(0, 0, 0, 0.7) 1px, 
-        rgba(0, 0, 0, 0.7) 10px /* Adjust for spacing */
-    );
-    opacity: 0.15; /* Adjust visibility of scanlines */
-    pointer-events: none; /* Ensure clicks go through */
-    animation: scan 10s linear infinite; /* Animation timing */
-}
-
-@keyframes scan {
-    0% {
-        transform: translateY(-100%); /* Start off-screen above */
-    }
-    100% {
-        transform: translateY(100%); /* Move to off-screen below */
-    }
-}
-</style>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pip-Boy Background Effect</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>Pip-Boy Interface</title>
+
+<style>
+/* ===============================
+   GLOBAL TERMINAL STYLING
+================================= */
+body {
+    margin: 0;
+    font-family: "Courier New", monospace;
+    color: #00ff66;
+    background: #001a0a;
+    background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(0,255,100,0.05) 0px,
+        rgba(0,255,100,0.05) 1px,
+        transparent 1px,
+        transparent 4px
+    );
+}
+
+/* ===============================
+   NAVIGATION TABS
+================================= */
+.nav {
+    display: flex;
+    gap: 40px;
+    padding: 20px 40px;
+    border-bottom: 2px solid #00ff66;
+}
+
+.nav button {
+    background: none;
+    border: none;
+    color: #00ff66;
+    font-size: 18px;
+    cursor: pointer;
+    position: relative;
+    padding: 10px 5px;
+    transition: 0.2s;
+}
+
+.nav button::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    height: 2px;
+    width: 0%;
+    background: #00ff66;
+    transition: 0.3s ease;
+}
+
+.nav button.active::after {
+    width: 100%;
+}
+
+.nav button:hover {
+    text-shadow: 0 0 8px #00ff66;
+}
+
+/* ===============================
+   PAGE CONTAINER
+================================= */
+.page {
+    display: none;
+    padding: 50px;
+}
+
+.page.active {
+    display: block;
+}
+
+/* ===============================
+   STATUS PAGE
+================================= */
+.stat-group {
+    margin-bottom: 40px;
+}
+
+.stat-label {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.slider {
+    width: 400px;
+}
+
+.stat-value {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+/* ===============================
+   INVENTORY PAGE
+================================= */
+.inventory-box {
+    border: 1px solid #00ff66;
+    padding: 20px;
+    width: 500px;
+}
+
+/* ===============================
+   RADIO PAGE
+================================= */
+.radio-panel {
+    width: 60%;
+}
+
+.station {
+    position: relative;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.station.selected {
+    background: rgba(0,255,100,0.08);
+}
+
+.station.selected::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    background: #000;
+    border: 2px solid #00ff66;
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Wave square */
+.wave-container {
+    position: fixed;
+    top: 80px;
+    right: 40px;
+    width: 25vw;
+    height: 25vw;
+    border: 2px solid #00ff66;
+    box-shadow: inset 0 0 40px rgba(0,255,100,0.3);
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Your Content Here</h1>
-        <p>Emulating the Pip-Boy Style</p>
-	<a href="RadioView/Radio.html" target="_blank">Go to Radio View</a>
+
+<!-- NAVIGATION -->
+<div class="nav">
+    <button class="active" data-page="status">STATUS</button>
+    <button data-page="inventory">INVENTORY</button>
+    <button data-page="radio">RADIO</button>
+</div>
+
+<!-- STATUS PAGE -->
+<div class="page active" id="status">
+    <h2>STATUS</h2>
+
+    <div class="stat-group">
+        <div class="stat-label">HP</div>
+        <input type="range" min="0" max="100" value="100" class="slider" id="hpSlider">
+        <div class="stat-value" id="hpValue">100 / 100</div>
     </div>
-    <div class="scanlines"></div> <!-- Scanlines overlay -->
+
+    <div class="stat-group">
+        <div class="stat-label">RADS</div>
+        <input type="range" min="0" max="100" value="0" class="slider" id="radSlider">
+        <div class="stat-value" id="radValue">0 RADS</div>
+    </div>
+</div>
+
+<!-- INVENTORY PAGE -->
+<div class="page" id="inventory">
+    <h2>INVENTORY</h2>
+    <div class="inventory-box">
+        Items will go here.
+    </div>
+</div>
+
+<!-- RADIO PAGE -->
+<div class="page" id="radio">
+    <h2>RADIO</h2>
+
+    <div class="radio-panel">
+        <div class="station">Galaxy News Radio</div>
+        <div class="station">Enclave Radio</div>
+        <div class="station">Mojave Music Radio</div>
+    </div>
+</div>
+
+<div class="wave-container">
+    <canvas id="waveCanvas"></canvas>
+</div>
+
+<script>
+/* ===============================
+   NAVIGATION LOGIC
+================================= */
+const navButtons = document.querySelectorAll(".nav button");
+const pages = document.querySelectorAll(".page");
+
+navButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        navButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        pages.forEach(p => p.classList.remove("active"));
+        document.getElementById(btn.dataset.page).classList.add("active");
+    });
+});
+
+/* ===============================
+   STATUS SLIDERS
+================================= */
+const hpSlider = document.getElementById("hpSlider");
+const radSlider = document.getElementById("radSlider");
+const hpValue = document.getElementById("hpValue");
+const radValue = document.getElementById("radValue");
+
+hpSlider.oninput = () => {
+    hpValue.textContent = hpSlider.value + " / 100";
+};
+
+radSlider.oninput = () => {
+    radValue.textContent = radSlider.value + " RADS";
+};
+
+/* ===============================
+   RADIO TOGGLE
+================================= */
+const stations = document.querySelectorAll(".station");
+let currentStation = null;
+let activeWave = false;
+
+stations.forEach(station => {
+    station.addEventListener("click", () => {
+        if (currentStation === station) {
+            station.classList.remove("selected");
+            currentStation = null;
+            activeWave = false;
+            return;
+        }
+
+        stations.forEach(s => s.classList.remove("selected"));
+        station.classList.add("selected");
+        currentStation = station;
+        activeWave = true;
+    });
+});
+
+/* ===============================
+   WAVEFORM
+================================= */
+const canvas = document.getElementById("waveCanvas");
+const ctx = canvas.getContext("2d");
+
+let width, height;
+let time = 0;
+
+function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    width = canvas.width;
+    height = canvas.height;
+}
+resize();
+window.addEventListener("resize", resize);
+
+function drawScales() {
+    ctx.strokeStyle = "rgba(0,255,100,0.2)";
+    ctx.lineWidth = 1;
+
+    for (let y = 0; y < height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+    }
+
+    for (let x = 0; x < width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+    }
+}
+
+function drawWave() {
+    ctx.clearRect(0, 0, width, height);
+    drawScales();
+
+    ctx.strokeStyle = "#00ff66";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    const centerY = height / 2;
+
+    for (let x = 0; x < width; x++) {
+        let y = centerY;
+
+        if (activeWave) {
+            y += Math.sin((x * 0.03) + time) * 20
+               + Math.sin((x * 0.11) + time * 1.5) * 15
+               + (Math.random() * 20 - 10);
+        }
+
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+
+    if (activeWave) time += 0.08;
+    requestAnimationFrame(drawWave);
+}
+
+drawWave();
+</script>
+
 </body>
 </html>
