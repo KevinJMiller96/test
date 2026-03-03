@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/audio/fart.mp3",
+      "dest": "/public/audio/fart.mp3"
+    }
+  ],
+  "files": [
+    "public/audio/fart.mp3"
+  ]
+}
