@@ -159,23 +159,22 @@ canvas {
 
 <!-- RADIO -->
 <div class="page" id="radio">
-    <h2>RADIO</h2>
 
-    <div class="station">
-        <div class="square"></div>
-        Galaxy News Radio
-    </div>
+	<div class="station" data-audio="audio/fart.mp3">
+   	 <div class="square"></div>
+   	 Galaxy News Radio
+	</div>
 
-    <div class="station">
-        <div class="square"></div>
-        Enclave Radio
-    </div>
+	<div class="station" data-audio="audio/fart.mp3">
+	    <div class="square"></div>
+    		Enclave Radio
+	</div>
 
-    <div class="station">
-        <div class="square"></div>
-        Mojave Music Radio
-    </div>
-</div>
+	<div class="station" data-audio="audio/mojave.mp3">
+	    <div class="square"></div>
+	    Mojave Music Radio
+	</div>
+
 
 </div>
 
@@ -210,25 +209,52 @@ radSlider.oninput = () => radValue.textContent = radSlider.value + " RADS";
 
 /* RADIO */
 const stations = document.querySelectorAll(".station");
+
 let currentStation = null;
 let activeWave = false;
+let currentAudio = null;
 
 stations.forEach(station => {
     station.addEventListener("click", () => {
 
+        // If clicking currently selected station → turn off
         if (currentStation === station) {
             station.classList.remove("selected");
+
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+
             currentStation = null;
             activeWave = false;
             return;
         }
 
+        // Remove selection from others
         stations.forEach(s => s.classList.remove("selected"));
         station.classList.add("selected");
+
+        // Stop previous audio
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        }
+
+        // Start new audio
+        const audioFile = station.dataset.audio;
+        currentAudio = new Audio(audioFile);
+        currentAudio.loop = true;
+        currentAudio.play();
+
         currentStation = station;
         activeWave = true;
     });
 });
+
+// Used by wave.js
+window.isRadioActive = () => activeWave;
 
 /* WAVEFORM */
 const canvas = document.getElementById("waveCanvas");
